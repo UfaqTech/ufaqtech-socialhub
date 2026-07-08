@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile • UfaqTech SocialHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body class="app-shell">
+    <!-- Topbar matching Home perfectly -->
+    <header class="topbar">
+      <div class="brand-holder">
+        <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle Navigation Drawer">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="brand-mark">UfaqTech SocialHub</div>
+      </div>
+      <div class="search-bar-wrapper" style="visibility: hidden; pointer-events: none;">
+        <i class="fa-solid fa-magnifying-glass search-bar-icon"></i>
+        <input class="search-box" type="search" placeholder="Search..." />
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+        <button class="icon-btn" id="notificationBtn" aria-label="Notifications">🔔</button>
+      </div>
+    </header>
+
+    <div class="app-body">
+      <!-- Overlay for mobile drawer closing -->
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <!-- Shared Unified Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-head">
+          <div class="avatar-container">
+            <img id="sidebarAvatar" class="avatar" src="assets/images/logo.png" alt="User avatar" onerror="this.src='https://raw.githubusercontent.com/UfaqTech/UT-SocialHub/main/assets/imges/UT_social-hub.png'" />
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="user-meta-details">
+            <h3 id="sidebarName">Loading...</h3>
+            <p id="sidebarEmail">Loading...</p>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <button class="nav-item" data-action="guidelines">
+            <i class="fa-solid fa-circle-info nav-icon text-blue"></i> Community Rules
+          </button>
+          <a class="nav-item" href="home.html">
+            <i class="fa-solid fa-house nav-icon text-blue"></i> Home Feed
+          </a>
+          <a class="nav-item" href="mailto:support@ufaqtech.com">
+            <i class="fa-solid fa-envelope nav-icon text-blue"></i> Team Support Desk
+          </a>
+          <button class="nav-item" data-action="invite">
+            <i class="fa-solid fa-user-plus nav-icon text-blue"></i> Invite Network
+          </button>
+          <button class="nav-item danger" id="logoutBtn">
+            <i class="fa-solid fa-power-off nav-icon"></i> Logout
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main Panel Workspace with matching dimensions -->
+      <main class="main-panel">
+        <div class="profile-shell" style="max-width: 720px; margin: 0 auto;">
+          <div class="profile-header-bar" style="margin-bottom: 20px;">
+            <a class="btn btn-ghost" href="home.html">
+              <i class="fa-solid fa-arrow-left"></i> Back to Hub
+            </a>
+          </div>
+
+          <!-- Profile Badge Content -->
+          <div class="user-bio-main-card">
+            <div class="user-avatar-large-wrapper">
+              <div class="avatar-large-initials">--</div>
+            </div>
+            <h2 class="user-profile-display-name">Loading Profile...</h2>
+            <p class="user-profile-bio-tagline">Connecting to ecosystem security databases...</p>
+            
+            <div class="quick-counter-row">
+              <div class="counter-item">
+                <span class="counter-number" id="totalLinks">0</span>
+                <span class="counter-label">SHARED</span>
+              </div>
+              <div class="counter-item-divider"></div>
+              <div class="counter-item">
+                <span class="counter-number" id="totalViews">0</span>
+                <span class="counter-label">TOTAL IMPACT</span>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="section-block-title">Dashboard Analytics</h3>
+          <div class="analytics-metrics-grid">
+            <div class="metric-widget-card">
+              <div class="metric-card-top-header">
+                <span class="metric-meta-label">Engagement</span>
+                <i class="fa-solid fa-share-nodes icon-metric-blue"></i>
+              </div>
+              <h4 class="metric-main-value-heading">Strong</h4>
+              <p class="metric-subtext-explain">Avg views metrics stable</p>
+            </div>
+
+            <div class="metric-widget-card">
+              <div class="metric-card-top-header">
+                <span class="metric-meta-label">Identity Status</span>
+                <i class="fa-solid fa-bookmark icon-metric-purple"></i>
+              </div>
+              <h4 class="metric-main-value-heading" id="securityScore">Fully Synced</h4>
+              <p class="metric-subtext-explain">Supabase session secure</p>
+            </div>
+          </div>
+
+          <h3 class="section-block-title">Your Submissions</h3>
+          <div id="profileLinks" class="profile-links-list-container"></div>
+
+          <h3 class="section-block-title">Recent Activity</h3>
+          <div id="activityFeed" class="profile-links-list-container"></div>
+
+          <div class="profile-action-footer-wrapper">
+            <button class="btn btn-primary-outline btn-block" id="editProfileDummyBtn">
+              <i class="fa-solid fa-pen"></i> Edit Profile Fields
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/profile.js"></script>
+  </body>
+</html>

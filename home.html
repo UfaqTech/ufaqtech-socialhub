@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home • UfaqTech SocialHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body class="app-shell">
+    <header class="topbar">
+      <div class="brand-holder">
+        <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle Navigation Drawer">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="brand-mark">UfaqTech SocialHub</div>
+      </div>
+      <div class="search-bar-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-bar-icon"></i>
+        <input id="searchInput" class="search-box" type="search" placeholder="Search communities..." />
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <select id="sortSelect" class="sort-select" aria-label="Sort communities">
+          <option value="latest">Latest</option>
+          <option value="popular">Most Popular</option>
+        </select>
+        <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+        <button class="icon-btn" id="notificationBtn" aria-label="Notifications">🔔</button>
+      </div>
+    </header>
+
+    <div class="app-body">
+      <!-- Overlay for mobile drawer auto-closing -->
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-head">
+          <div class="avatar-container">
+            <img id="sidebarAvatar" class="avatar" src="assets/images/logo.png" alt="User avatar" onerror="this.src='https://raw.githubusercontent.com/UfaqTech/UT-SocialHub/main/assets/imges/UT_social-hub.png'" />
+            <span class="active-dot-indicator"></span>
+          </div>
+          <div class="user-meta-details">
+            <h3 id="sidebarName">Loading...</h3>
+            <p id="sidebarEmail">Loading...</p>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <button class="nav-item" data-action="guidelines">
+            <i class="fa-solid fa-circle-info nav-icon text-blue"></i> Community Rules
+          </button>
+          <a class="nav-item" href="profile.html">
+            <i class="fa-solid fa-chart-line nav-icon text-blue"></i> My Dashboard
+          </a>
+          <a class="nav-item" href="mailto:support@ufaqtech.com">
+            <i class="fa-solid fa-envelope nav-icon text-blue"></i> Team Support Desk
+          </a>
+          <button class="nav-item" data-action="invite">
+            <i class="fa-solid fa-user-plus nav-icon text-blue"></i> Invite Network
+          </button>
+          <button class="nav-item danger" id="logoutBtn">
+            <i class="fa-solid fa-power-off nav-icon"></i> Logout
+          </button>
+        </nav>
+      </aside>
+
+      <main class="main-panel">
+        <section class="filters-panel">
+          <div class="chip-group">
+            <div class="filter-header">
+              <i class="fa-solid fa-share-nodes filter-icon text-blue"></i>
+              <h4>Platform</h4>
+            </div>
+            <div class="chip-list" id="platformFilters"></div>
+          </div>
+          <div class="chip-group-divider"></div>
+          <div class="chip-group">
+            <div class="filter-header">
+              <i class="fa-solid fa-tags filter-icon text-blue"></i>
+              <h4>Verticals</h4>
+            </div>
+            <div class="chip-list" id="categoryFilters"></div>
+          </div>
+        </section>
+
+        <!-- Main Feed Grid -->
+        <section id="feedGrid" class="feed-grid"></section>
+      </main>
+    </div>
+
+    <!-- Animated FAB plus button -->
+    <button class="fab" id="createLinkBtn" type="button" aria-label="Submit link">+</button>
+
+    <!-- Unified Popup Modal Container with Live Preview -->
+    <div class="modal" id="linkModal" hidden="true" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="linkModalTitle"> 
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="linkModalTitle">Submit a new link</h3>
+          <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">&times;</button>
+        </div>
+        
+        <form id="linkForm" class="stacked-form">
+          <!-- URL Field First for Auto-Detection -->
+          <div class="input-element-group">
+            <label for="inputUrl">Community URL Link</label>
+            <input name="url" id="inputUrl" type="url" placeholder="https://chat.whatsapp.com/... or https://t.me/..." required />
+          </div>
+
+          <div id="metadataStatus" class="metadata-status">Paste a link above to auto-fill details & view live preview.</div>
+
+          <!-- Platform & Sub Type -->
+          <div class="form-row-split">
+            <div class="input-element-group">
+              <label for="inputPlatform">Platform</label>
+              <select name="platform" id="inputPlatform">
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Telegram">Telegram</option>
+                <option value="Facebook">Facebook</option>
+              </select>
+            </div>
+            <div class="input-element-group">
+              <label for="inputSubType">Sub Type</label>
+              <select name="subType" id="inputSubType">
+                <option value="Group">Group</option>
+                <option value="Channel">Channel</option>
+                <option value="Page">Page</option>
+                <option value="Community">Community</option>
+                <option value="Bot">Bot</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Category & Members -->
+          <div class="form-row-split">
+            <div class="input-element-group">
+              <label for="inputCategory">Category</label>
+              <select name="category" id="inputCategory">
+                <option value="Educational">Educational</option>
+                <option value="Programming">Programming</option>
+                <option value="Tech">Tech</option>
+                <option value="Funny">Funny</option>
+                <option value="18+">18+</option>
+                <option value="Business">Business</option>
+              </select>
+            </div>
+            <div class="input-element-group">
+              <label for="inputMemberCount">Members / Followers</label>
+              <input name="memberCount" id="inputMemberCount" type="number" min="0" placeholder="e.g. 1500" />
+            </div>
+          </div>
+
+          <!-- Title & Description -->
+          <div class="input-element-group">
+            <label for="inputTitle">Community Title</label>
+            <input name="title" id="inputTitle" type="text" placeholder="Group or community name" required />
+          </div>
+
+          <div class="input-element-group">
+            <label for="inputDescription">Short Description</label>
+            <textarea name="description" id="inputDescription" rows="3" placeholder="Tell people what this community is about..." required></textarea>
+          </div>
+
+          <div class="input-element-group">
+            <label for="inputImageUrl">Image URL (optional)</label>
+            <input name="imageUrl" id="inputImageUrl" type="url" placeholder="https://example.com/image.jpg" />
+          </div>
+
+          <button class="btn btn-primary btn-block" type="submit">Submit for Review</button>
+        </form>
+
+        <!-- Real-Time Interactive Card Preview Container -->
+        <div class="preview-card-holder">
+          <div class="preview-badge">Live Preview</div>
+          <div id="previewCard" class="preview-card-display">
+            <div class="placeholder-text">Fill out the form or paste a URL to see live card preview</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="reportModal" hidden="true" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="reportModalTitle">Report this community</h3>
+          <button class="modal-close-btn" id="closeReportModalBtn" aria-label="Close report modal">&times;</button>
+        </div>
+        <form id="reportForm" class="stacked-form">
+          <input type="hidden" id="reportLinkId" />
+          <div class="input-element-group">
+            <label for="reportReason">Why are you reporting this link?</label>
+            <textarea id="reportReason" name="reportReason" rows="4" placeholder="Describe the issue, such as spam, scam, or inappropriate content." required></textarea>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Send Report</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/form-handler.js"></script>
+  </body>
+</html>
