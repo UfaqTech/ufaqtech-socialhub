@@ -38,26 +38,42 @@ function validatePassword(password) {
   return { valid: true, message: '' };
 }
 
-async function ensureProfile(userId, fullName = '', email = '') {
+async function ensureProfile(userId, fullName = '', email = '', avatarUrl = '') {
   const { data: existingProfile, error: lookupError } = await supabase
     .from('profiles')
-    .select('id, role, is_banned')
+    .select('id, role, is_banned, full_name, avatar_url')
     .eq('id', userId)
     .maybeSingle();
 
   if (lookupError) throw lookupError;
-  if (existingProfile) return existingProfile;
+  if (existingProfile) {
+    const updates = {};
+    if (!existingProfile.full_name && fullName) updates.full_name = fullName;
+    if (!existingProfile.avatar_url && avatarUrl) updates.avatar_url = avatarUrl;
+
+    if (Object.keys(updates).length) {
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', userId);
+      if (updateError) throw updateError;
+      return { ...existingProfile, ...updates };
+    }
+
+    return existingProfile;
+  }
 
   const { error: insertError } = await supabase.from('profiles').insert({
     id: userId,
     full_name: fullName || email || 'New User',
     email,
+    avatar_url: avatarUrl || null,
     role: 'user',
     is_banned: false,
   });
 
   if (insertError) throw insertError;
-  return { id: userId, role: 'user', is_banned: false };
+  return { id: userId, role: 'user', is_banned: false, avatar_url: avatarUrl || null };
 }
 
 function togglePasswordVisibility() {
@@ -191,7 +207,12 @@ if (form) {
         if (error) throw error;
 
         if (data.user) {
-          await ensureProfile(data.user.id, fullName, email);
+          await ensureProfile(
+            data.user.id,
+            fullName,
+            email,
+            data.user.user_metadata?.picture || ''
+          );
         }
 
         setMessage('Account created successfully! Please check your inbox for a confirmation email.', 'success');
@@ -200,7 +221,12 @@ if (form) {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
-        const profile = await ensureProfile(data.user.id, data.user.user_metadata?.full_name || '', email);
+        const profile = await ensureProfile(
+          data.user.id,
+          data.user.user_metadata?.full_name || '',
+          email,
+          data.user.user_metadata?.picture || ''
+        );
 
         if (profile?.is_banned) {
           await supabase.auth.signOut();

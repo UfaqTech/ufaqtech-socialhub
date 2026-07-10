@@ -133,58 +133,34 @@ document.addEventListener('DOMContentLoaded', function() {
   async function fetchMetadata(url) {
     statusText.className = 'loading';
     statusText.innerHTML = '⏳ Detecting link details & extracting metadata...';
-    
-    // Artificial delay (1.2 seconds) to look responsive and premium
-    await new Promise(resolve => setTimeout(resolve, 1200));
 
-    let extractedData = {
-      title: 'Global Tech Hub',
-      desc: 'A compiled networking ecosystem discussing structural software architectures, web developments, and modern frameworks.',
-      img: 'https://picsum.photos/120',
-      subType: 'Group',
-      category: 'Tech',
-      members: '4200'
-    };
+    try {
+      const response = await fetch(`${window.API_ENDPOINTS.EXTRACT_METADATA}?url=${encodeURIComponent(url)}`);
+      if (!response.ok) {
+        throw new Error('Could not fetch metadata from the server.');
+      }
 
-    // Altering mock payload based on URL context clues
-    if (url.includes('t.me')) {
-      extractedData.title = 'Telegram Dev Channel';
-      extractedData.desc = 'Official announcements, build schedules, and API deployment structures regarding production modules.';
-      extractedData.subType = 'Channel';
-      extractedData.category = 'Programming';
-      extractedData.members = '12800';
-    } else if (url.includes('facebook.com')) {
-      extractedData.title = 'UI/UX Designers Guild';
-      extractedData.desc = 'A community-driven Facebook page reviewing design trends, web assets, and product management workflows.';
-      extractedData.subType = 'Page';
-      extractedData.category = 'Business';
-      extractedData.members = '24500';
-    } else if (url.includes('whatsapp.com')) {
-      const inviteIdMatch = url.match(/chat\.whatsapp\.com\/(\w+)/i);
-      const inviteId = inviteIdMatch ? inviteIdMatch[1] : '';
-      extractedData.title = 'WhatsApp Community';
-      extractedData.desc = 'Join our WhatsApp discussion group for community networking and resources.';
-      extractedData.subType = 'Group';
-      extractedData.category = 'Educational';
-      extractedData.members = '1024';
-      extractedData.img = inviteId
-        ? `https://pps.whatsapp.net/v/t61.24694-24/${inviteId}.jpg?oh=placeholder&oe=placeholder`
-        : 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=400&q=80';
+      const result = await response.json();
+      const extractedData = result.metadata || {};
+
+      titleInput.value = extractedData.title || titleInput.value;
+      descInput.value = extractedData.description || descInput.value;
+      imgInput.value = extractedData.image || imgInput.value;
+      platformSelect.value = extractedData.platform || platformSelect.value;
+      subTypeSelect.value = extractedData.subType || subTypeSelect.value;
+      categorySelect.value = extractedData.category || categorySelect.value;
+      memberInput.value = extractedData.members || memberInput.value;
+
+      updateMemberLimits(platformSelect.value);
+
+      statusText.className = 'success';
+      statusText.innerHTML = '✅ Metadata fetched and fields applied successfully!';
+    } catch (error) {
+      console.warn('Metadata fetch failed:', error);
+      statusText.className = 'error';
+      statusText.innerHTML = '⚠️ Could not fetch metadata. Please fill in the fields manually.';
     }
 
-    // Populate Input Fields dynamically
-    titleInput.value = extractedData.title;
-    descInput.value = extractedData.desc;
-    imgInput.value = extractedData.img;
-    subTypeSelect.value = extractedData.subType;
-    categorySelect.value = extractedData.category;
-    memberInput.value = extractedData.members;
-
-    // Status Notification Update
-    statusText.className = 'success';
-    statusText.innerHTML = '✅ Metadata fetched and fields applied successfully!';
-    
-    // Repopulate live preview elements
     updateLivePreview();
   }
 
@@ -265,6 +241,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Initialize Supabase client (uses globals from assets/js/config.js)
       const supabaseClient = window.supabase || (window.supabase = supabase.createClient(window.UFAQTECH_SUPABASE_URL, window.UFAQTECH_SUPABASE_ANON_KEY));
+
+      const validationResponse = await fetch(window.API_ENDPOINTS.SUBMIT_COMMUNITY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          platform: formData.platform,
+          subType: formData.sub_type,
+          category: formData.category,
+          title: formData.title,
+          description: formData.description,
+          url: formData.url,
+          imageUrl: formData.image_url,
+          memberCount: formData.member_count,
+          submittedBy: formData.submitted_by,
+        }),
+      });
+
+      const validationResult = await validationResponse.json();
+      if (!validationResponse.ok) {
+        throw new Error(validationResult.error || 'Server validation failed.');
+      }
 
       const { data, error } = await supabaseClient
         .from('communities')
