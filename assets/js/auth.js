@@ -15,8 +15,7 @@ const googleAuthBtn = document.getElementById('googleAuthBtn');
 let mode = 'login';
 
 function getRedirectUrl() {
-  const path = window.location.pathname.replace(/\/login\.html$/i, '/home.html');
-  return `${window.location.origin}${path}`;
+  return `${window.location.origin}/home.html`;
 }
 
 function setMessage(message, type = 'info') {
@@ -141,6 +140,12 @@ if (googleAuthBtn) {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    await supabase.auth.getSessionFromUrl({ storeSession: true });
+  } catch (error) {
+    console.warn('OAuth session restore skipped:', error?.message || error);
+  }
+
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {

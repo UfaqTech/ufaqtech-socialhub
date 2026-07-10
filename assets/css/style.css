@@ -136,6 +136,12 @@ input::placeholder {
   color: var(--text-muted);
 }
 
+.input-hint {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 /* App Header Layout Topbar */
 .topbar {
   display: flex;

@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const memberInput = document.getElementById('inputMemberCount');
   
   const statusText = document.getElementById('metadataStatus');
+  const memberHint = document.getElementById('memberHint');
   const previewCard = document.getElementById('previewCard');
   const linkForm = document.getElementById('linkForm');
   const createLinkBtn = document.getElementById('createLinkBtn');
@@ -42,6 +43,41 @@ document.addEventListener('DOMContentLoaded', function() {
     updateLivePreview();
   }
 
+  const memberLimits = {
+    WhatsApp: { min: 1, max: 1024, label: '1–1,024 members' },
+    Telegram: { min: 1, max: 2000000, label: '1–2,000,000 members' },
+    Facebook: { min: 1, max: 10000000, label: '1–10,000,000 followers' },
+    default: { min: 1, max: 1000000, label: '1–1,000,000 members/followers' },
+  };
+
+  function updateMemberLimits(platform) {
+    const limits = memberLimits[platform] || memberLimits.default;
+    if (memberInput) {
+      memberInput.min = limits.min;
+      memberInput.max = limits.max;
+    }
+    if (memberHint) {
+      memberHint.textContent = `${platform} limit: ${limits.label}. Adjust the value to fit the community size.`;
+    }
+  }
+
+  function validateMemberCount() {
+    const value = Number(memberInput.value || 0);
+    const platform = platformSelect.value || 'WhatsApp';
+    const limits = memberLimits[platform] || memberLimits.default;
+
+    if (!memberInput.value.trim()) {
+      return { valid: true, message: '' };
+    }
+    if (value < limits.min) {
+      return { valid: false, message: `Enter at least ${limits.min} members/followers for ${platform}.` };
+    }
+    if (value > limits.max) {
+      return { valid: false, message: `For ${platform}, the maximum members/followers is ${limits.max.toLocaleString()}.` };
+    }
+    return { valid: true, message: '' };
+  }
+
   // Event Listeners for Modal Control
   createLinkBtn.addEventListener('click', openModal);
   closeModalBtn.addEventListener('click', closeModal);
@@ -67,6 +103,13 @@ document.addEventListener('DOMContentLoaded', function() {
     input.addEventListener('change', updateLivePreview);
   });
 
+  platformSelect.addEventListener('change', () => {
+    updateMemberLimits(platformSelect.value);
+    updateLivePreview();
+  });
+
+  updateMemberLimits(platformSelect.value || 'WhatsApp');
+
   // Detect pasting/typing into the URL space
   urlInput.addEventListener('input', async (e) => {
     const urlValue = e.target.value.trim();
@@ -75,6 +118,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (urlValue.includes('whatsapp.com')) platformSelect.value = 'WhatsApp';
     else if (urlValue.includes('t.me')) platformSelect.value = 'Telegram';
     else if (urlValue.includes('facebook.com')) platformSelect.value = 'Facebook';
+
+    updateMemberLimits(platformSelect.value);
 
     // Check if URL looks solid before firing metadata fetcher
     if (urlValue.startsWith('http://') || urlValue.startsWith('https://')) {
@@ -115,11 +160,16 @@ document.addEventListener('DOMContentLoaded', function() {
       extractedData.category = 'Business';
       extractedData.members = '24500';
     } else if (url.includes('whatsapp.com')) {
+      const inviteIdMatch = url.match(/chat\.whatsapp\.com\/(\w+)/i);
+      const inviteId = inviteIdMatch ? inviteIdMatch[1] : '';
       extractedData.title = 'WhatsApp Community';
-      extractedData.desc = 'Join our active WhatsApp group for community discussions and networking.';
+      extractedData.desc = 'Join our WhatsApp discussion group for community networking and resources.';
       extractedData.subType = 'Group';
       extractedData.category = 'Educational';
-      extractedData.members = '5300';
+      extractedData.members = '1024';
+      extractedData.img = inviteId
+        ? `https://pps.whatsapp.net/v/t61.24694-24/${inviteId}.jpg?oh=placeholder&oe=placeholder`
+        : 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=400&q=80';
     }
 
     // Populate Input Fields dynamically
@@ -180,6 +230,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Validate form
     if (!titleInput.value.trim() || !descInput.value.trim() || !urlInput.value.trim()) {
       alert('⚠️ Please fill in all required fields.');
+      return;
+    }
+
+    const memberValidation = validateMemberCount();
+    if (!memberValidation.valid) {
+      alert(`⚠️ ${memberValidation.message}`);
       return;
     }
 
