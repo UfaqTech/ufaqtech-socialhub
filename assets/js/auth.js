@@ -15,7 +15,9 @@ const googleAuthBtn = document.getElementById('googleAuthBtn');
 let mode = 'login';
 
 function getRedirectUrl() {
-  return `${window.location.origin}/home.html`;
+  // Use the login page as the OAuth callback so auth.js can parse the session
+  // and then redirect the user to home.html after successful sign-in.
+  return `${window.location.origin}/login.html`;
 }
 
 function setMessage(message, type = 'info') {

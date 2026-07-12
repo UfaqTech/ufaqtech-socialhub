@@ -2,6 +2,14 @@ const supabaseUrl = window.UFAQTECH_SUPABASE_URL || 'https://YOUR_SUPABASE_URL.s
 const supabaseKey = window.UFAQTECH_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+async function restoreOAuthSession() {
+  try {
+    await supabase.auth.getSessionFromUrl({ storeSession: true });
+  } catch (error) {
+    console.warn('OAuth session restore skipped:', error?.message || error);
+  }
+}
+
 const feedGrid = document.getElementById('feedGrid');
 const searchInput = document.getElementById('searchInput');
 const platformFilters = document.getElementById('platformFilters');
@@ -753,7 +761,10 @@ if (reportForm) {
   });
 }
 
-applyTheme();
-renderFilterButtons();
-loadProfile();
-loadLinks();
+window.addEventListener('DOMContentLoaded', async () => {
+  await restoreOAuthSession();
+  applyTheme();
+  renderFilterButtons();
+  loadProfile();
+  loadLinks();
+});
