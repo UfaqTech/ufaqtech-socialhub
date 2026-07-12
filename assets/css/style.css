@@ -546,6 +546,16 @@ input::placeholder {
   color: #ffffff;
 }
 
+.chip .chip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  font-size: 0.95rem;
+}
+
 /* Feed List Cards Structure Grid */
 .feed-grid {
   display: grid;

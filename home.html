@@ -160,21 +160,24 @@
           <div class="form-row-split">
             <div class="input-element-group">
               <label for="inputPlatform">Platform</label>
-              <select name="platform" id="inputPlatform">
-                <option value="WhatsApp">WhatsApp</option>
-                <option value="Telegram">Telegram</option>
-                <option value="Facebook">Facebook</option>
-              </select>
+              <div class="select-with-icon">
+                <span id="platformIcon" class="option-icon"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i></span>
+                <select name="platform" id="inputPlatform">
+                  <option value="WhatsApp" data-icon="fa-brands fa-whatsapp" data-color="#25D366">WhatsApp</option>
+                  <option value="Telegram" data-icon="fa-brands fa-telegram" data-color="#0088cc">Telegram</option>
+                  <option value="Facebook" data-icon="fa-brands fa-facebook" data-color="#1877f2">Facebook</option>
+                </select>
+              </div>
             </div>
+
             <div class="input-element-group">
               <label for="inputSubType">Sub Type</label>
-              <select name="subType" id="inputSubType">
-                <option value="Group">Group</option>
-                <option value="Channel">Channel</option>
-                <option value="Page">Page</option>
-                <option value="Community">Community</option>
-                <option value="Bot">Bot</option>
-              </select>
+              <div class="select-with-icon">
+                <span id="subTypeIcon" class="option-icon"><i class="fa-solid fa-users"></i></span>
+                <select name="subType" id="inputSubType">
+                  <!-- dynamically populated based on platform -->
+                </select>
+              </div>
             </div>
           </div>
           
@@ -182,14 +185,30 @@
           <div class="form-row-split">
             <div class="input-element-group">
               <label for="inputCategory">Category</label>
-              <select name="category" id="inputCategory">
-                <option value="Educational">Educational</option>
-                <option value="Programming">Programming</option>
-                <option value="Tech">Tech</option>
-                <option value="Funny">Funny</option>
-                <option value="18+">18+</option>
-                <option value="Business">Business</option>
-              </select>
+              <div class="select-with-icon">
+                <span id="categoryIcon" class="option-icon"><i class="fa-solid fa-book-open"></i></span>
+                <select name="category" id="inputCategory">
+                  <option value="Educational" data-icon="fa-solid fa-book-open">Educational</option>
+                  <option value="Programming" data-icon="fa-solid fa-code">Programming</option>
+                  <option value="Tech" data-icon="fa-solid fa-microchip">Tech</option>
+                  <option value="Funny" data-icon="fa-solid fa-face-laugh">Funny</option>
+                  <option value="18+" data-icon="fa-solid fa-circle-exclamation">18+</option>
+                  <option value="Entertainment" data-icon="fa-solid fa-film">Entertainment</option>
+                  <option value="Business" data-icon="fa-solid fa-briefcase">Business</option>
+                  <option value="Marketing" data-icon="fa-solid fa-bullhorn">Marketing</option>
+                  <option value="Lifestyle" data-icon="fa-solid fa-spa">Lifestyle</option>
+                  <option value="Health & Fitness" data-icon="fa-solid fa-heart">Health & Fitness</option>
+                  <option value="News & Politics" data-icon="fa-solid fa-newspaper">News & Politics</option>
+                  <option value="Gaming" data-icon="fa-solid fa-gamepad">Gaming</option>
+                  <option value="Music & Arts" data-icon="fa-solid fa-music">Music & Arts</option>
+                  <option value="Travel & Food" data-icon="fa-solid fa-plane">Travel & Food</option>
+                  <option value="Science & Innovation" data-icon="fa-solid fa-flask">Science & Innovation</option>
+                  <option value="Finance & Investing" data-icon="fa-solid fa-chart-line">Finance & Investing</option>
+                  <option value="Spirituality & Religion" data-icon="fa-solid fa-hands-praying">Spirituality & Religion</option>
+                  <option value="Sports" data-icon="fa-solid fa-basketball-ball">Sports</option>
+                  <option value="Memes" data-icon="fa-solid fa-face-grin-squint">Memes</option>
+                </select>
+              </div>
             </div>
             <div class="input-element-group">
               <label for="inputMemberCount">Members / Followers</label>
@@ -247,6 +266,89 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
     <script src="assets/js/config.js"></script>
+    <script>
+      (function () {
+        const subTypeMap = {
+          WhatsApp: [
+            { value: 'Group', icon: 'fa-solid fa-users' },
+            { value: 'Community', icon: 'fa-solid fa-users' },
+            { value: 'Channel', icon: 'fa-solid fa-broadcast-tower' }
+          ],
+          Telegram: [
+            { value: 'Channel', icon: 'fa-solid fa-broadcast-tower' },
+            { value: 'Group', icon: 'fa-solid fa-users' },
+            { value: 'Bot', icon: 'fa-solid fa-robot' }
+          ],
+          Facebook: [
+            { value: 'Page', icon: 'fa-brands fa-facebook' },
+            { value: 'Group', icon: 'fa-solid fa-users' }
+          ]
+        };
+
+        function setIcon(spanId, iconClass, color) {
+          const span = document.getElementById(spanId);
+          if (!span) return;
+          span.innerHTML = `<i class="${iconClass}" style="color:${color||''}"></i>`;
+        }
+
+        function populateSubtypes(platform) {
+          const select = document.getElementById('inputSubType');
+          if (!select) return;
+          select.innerHTML = '';
+          const items = subTypeMap[platform] || [];
+          items.forEach((it) => {
+            const opt = document.createElement('option');
+            opt.value = it.value;
+            opt.textContent = it.value;
+            opt.dataset.icon = it.icon;
+            select.appendChild(opt);
+          });
+          // set subtype icon to first
+          setIcon('subTypeIcon', items[0]?.icon || 'fa-solid fa-users');
+        }
+
+        function updatePlatformIcon() {
+          const p = document.getElementById('inputPlatform');
+          if (!p) return;
+          const selected = p.options[p.selectedIndex];
+          const icon = selected.dataset.icon || 'fa-solid fa-globe';
+          const color = selected.dataset.color || '';
+          setIcon('platformIcon', icon, color);
+          populateSubtypes(selected.value);
+        }
+
+        function updateSubTypeIcon() {
+          const s = document.getElementById('inputSubType');
+          if (!s) return;
+          const selected = s.options[s.selectedIndex];
+          const icon = selected?.dataset.icon || 'fa-solid fa-users';
+          setIcon('subTypeIcon', icon);
+        }
+
+        function updateCategoryIcon() {
+          const c = document.getElementById('inputCategory');
+          if (!c) return;
+          const selected = c.options[c.selectedIndex];
+          const icon = selected?.dataset.icon || 'fa-solid fa-tag';
+          setIcon('categoryIcon', icon);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+          const p = document.getElementById('inputPlatform');
+          const s = document.getElementById('inputSubType');
+          const c = document.getElementById('inputCategory');
+
+          if (p) p.addEventListener('change', updatePlatformIcon);
+          if (s) s.addEventListener('change', updateSubTypeIcon);
+          if (c) c.addEventListener('change', updateCategoryIcon);
+
+          // initialize
+          updatePlatformIcon();
+          updateSubTypeIcon();
+          updateCategoryIcon();
+        });
+      })();
+    </script>
     <script src="assets/js/dashboard.js"></script>
     <script src="assets/js/form-handler.js"></script>
   </body>

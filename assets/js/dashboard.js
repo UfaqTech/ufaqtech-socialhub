@@ -45,7 +45,51 @@ const inputUrl = document.getElementById('inputUrl');
 const metadataStatus = document.getElementById('metadataStatus');
 
 const platforms = ['All', 'WhatsApp', 'Telegram', 'Facebook'];
-const categories = ['All', 'Educational', 'Programming', 'Tech', 'Funny', '18+', 'Business'];
+const categories = [
+  'All',
+  'Educational',
+  'Programming',
+  'Tech',
+  'Funny',
+  '18+',
+  'Entertainment',
+  'Business',
+  'Marketing',
+  'Lifestyle',
+  'Health & Fitness',
+  'News & Politics',
+  'Gaming',
+  'Music & Arts',
+  'Travel & Food',
+  'Science & Innovation',
+  'Finance & Investing',
+  'Spirituality & Religion',
+  'Sports',
+  'Memes'
+];
+
+const categoryIcons = {
+  All: '<i class="fa-solid fa-th-large"></i>',
+  Educational: '<i class="fa-solid fa-book-open"></i>',
+  Programming: '<i class="fa-solid fa-code"></i>',
+  Tech: '<i class="fa-solid fa-microchip"></i>',
+  Funny: '<i class="fa-solid fa-face-laugh"></i>',
+  '18+': '<i class="fa-solid fa-circle-exclamation"></i>',
+  Entertainment: '<i class="fa-solid fa-film"></i>',
+  Business: '<i class="fa-solid fa-briefcase"></i>',
+  Marketing: '<i class="fa-solid fa-bullhorn"></i>',
+  Lifestyle: '<i class="fa-solid fa-spa"></i>',
+  'Health & Fitness': '<i class="fa-solid fa-heart"></i>',
+  'News & Politics': '<i class="fa-solid fa-newspaper"></i>',
+  Gaming: '<i class="fa-solid fa-gamepad"></i>',
+  'Music & Arts': '<i class="fa-solid fa-music"></i>',
+  'Travel & Food': '<i class="fa-solid fa-plane"></i>',
+  'Science & Innovation': '<i class="fa-solid fa-flask"></i>',
+  'Finance & Investing': '<i class="fa-solid fa-chart-line"></i>',
+  'Spirituality & Religion': '<i class="fa-solid fa-hands-praying"></i>',
+  Sports: '<i class="fa-solid fa-basketball-ball"></i>',
+  Memes: '<i class="fa-solid fa-face-grin-squint"></i>'
+};
 
 let links = [];
 let selectedPlatform = 'All';
@@ -182,7 +226,8 @@ function renderFilterButtons() {
   }).join('');
 
   categoryFilters.innerHTML = categories.map((category) => {
-    return `<button class="chip ${selectedCategory === category ? 'active' : ''}" data-type="category" data-value="${category}">${category}</button>`;
+    const iconHtml = categoryIcons[category] || '';
+    return `<button class="chip ${selectedCategory === category ? 'active' : ''}" data-type="category" data-value="${category}"><span class="chip-icon">${iconHtml}</span> ${category}</button>`;
   }).join('');
 }
 
