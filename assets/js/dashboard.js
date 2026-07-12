@@ -2,18 +2,6 @@ const supabaseUrl = window.UFAQTECH_SUPABASE_URL || 'https://YOUR_SUPABASE_URL.s
 const supabaseKey = window.UFAQTECH_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-async function handleOAuthRedirect() {
-  if (!window.location.hash || !window.location.hash.includes('access_token')) return;
-
-  try {
-    const { error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
-    if (error) throw error;
-    window.location.hash = '';
-  } catch (error) {
-    console.warn('OAuth redirect error:', error?.message || error);
-  }
-}
-
 const feedGrid = document.getElementById('feedGrid');
 const searchInput = document.getElementById('searchInput');
 const platformFilters = document.getElementById('platformFilters');
@@ -100,15 +88,24 @@ function showToast(message, isError = false) {
   }, 3500);
 }
 
+function updateSidebarControls(isOpen) {
+  if (menuToggleBtn) {
+    menuToggleBtn.setAttribute('aria-expanded', String(Boolean(isOpen)));
+  }
+  if (sidebar) {
+    sidebar.setAttribute('aria-hidden', String(!isOpen));
+  }
+}
+
 function toggleSidebar(forceState) {
   const shouldOpen = typeof forceState === 'boolean' ? forceState : !sidebar.classList.contains('active');
   sidebar.classList.toggle('active', shouldOpen);
   sidebarOverlay.classList.toggle('active', shouldOpen);
+  updateSidebarControls(shouldOpen);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  handleOAuthRedirect();
-
+  updateSidebarControls(false);
   try {
     const targetModal = document.getElementById('linkModal');
     if (targetModal) {
@@ -151,6 +148,12 @@ menuToggleBtn?.addEventListener('click', (event) => {
 sidebarOverlay?.addEventListener('click', () => toggleSidebar(false));
 Array.from(document.querySelectorAll('.sidebar .nav-item')).forEach((item) => {
   item.addEventListener('click', () => toggleSidebar(false));
+});
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 900 && sidebar?.classList.contains('active')) {
+    toggleSidebar(false);
+  }
 });
 
 if (themeToggleBtn) {

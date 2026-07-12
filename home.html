@@ -16,22 +16,23 @@
   <body class="app-shell">
     <header class="topbar">
       <div class="brand-holder">
-        <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle Navigation Drawer">
+        <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle Navigation Drawer" aria-controls="sidebar" aria-expanded="false">
           <i class="fa-solid fa-bars"></i>
         </button>
-        <div class="brand-mark">UfaqTech SocialHub</div>
+        <img src="assets/images/UT_social-hub.png" alt="UfaqTech SocialHub" class="brand-logo" />
       </div>
       <div class="search-bar-wrapper">
         <i class="fa-solid fa-magnifying-glass search-bar-icon"></i>
         <input id="searchInput" class="search-box" type="search" placeholder="Search communities..." />
       </div>
-      <div style="display:flex; align-items:center; gap:8px;">
+      <div class="topbar-controls">
+        <label for="sortSelect" class="sr-only">Sort communities</label>
         <select id="sortSelect" class="sort-select" aria-label="Sort communities">
           <option value="latest">Latest</option>
           <option value="popular">Most Popular</option>
         </select>
         <button class="icon-btn" id="themeToggleBtn" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
-        <button class="icon-btn" id="notificationBtn" aria-label="Notifications">🔔</button>
+        <button class="icon-btn" id="notificationBtn" aria-label="Notifications"><i class="fa-solid fa-bell"></i></button>
       </div>
     </header>
 
@@ -40,34 +41,58 @@
       <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
       <aside class="sidebar" id="sidebar">
-        <div class="sidebar-head">
-          <div class="avatar-container">
-            <img id="sidebarAvatar" class="avatar" src="assets/images/logo.png" alt="User avatar" onerror="this.src='https://raw.githubusercontent.com/UfaqTech/UT-SocialHub/main/assets/imges/UT_social-hub.png'" />
-            <span class="active-dot-indicator"></span>
-          </div>
-          <div class="user-meta-details">
-            <h3 id="sidebarName">Loading...</h3>
-            <p id="sidebarEmail">Loading...</p>
-          </div>
-        </div>
-        <nav class="sidebar-nav">
-          <button class="nav-item" data-action="guidelines">
-            <i class="fa-solid fa-circle-info nav-icon text-blue"></i> Community Rules
-          </button>
-          <a class="nav-item" href="profile.html">
-            <i class="fa-solid fa-chart-line nav-icon text-blue"></i> My Dashboard
-          </a>
-          <a class="nav-item" href="mailto:support@ufaqtech.com">
-            <i class="fa-solid fa-envelope nav-icon text-blue"></i> Team Support Desk
-          </a>
-          <button class="nav-item" data-action="invite">
-            <i class="fa-solid fa-user-plus nav-icon text-blue"></i> Invite Network
-          </button>
-          <button class="nav-item danger" id="logoutBtn">
-            <i class="fa-solid fa-power-off nav-icon"></i> Logout
-          </button>
-        </nav>
-      </aside>
+  <!-- Profile Block -->
+  <div class="sidebar-head">
+    <div class="avatar-container">
+      <img id="sidebarAvatar" class="avatar" src="assets/images/logo.png" alt="User avatar" onerror="this.src='https://raw.githubusercontent.com/UfaqTech/UT-SocialHub/main/assets/imges/UT_social-hub.png'" />
+      <span class="active-dot-indicator"></span>
+    </div>
+    <div class="user-meta-details">
+      <h3 id="sidebarName">Loading...</h3>
+      <p id="sidebarEmail">loading.user@domain.com</p>
+    </div>
+  </div>
+
+  <!-- Navigation Elements -->
+  <nav class="sidebar-nav">
+    <a class="nav-item active" href="profile.html">
+      <i class="fa-solid fa-chart-line nav-icon"></i> 
+      <span>My Profile</span>
+    </a>
+    
+    <button class="nav-item" data-action="guidelines">
+      <i class="fa-solid fa-circle-info nav-icon"></i> 
+      <span>Community Rules</span>
+    </button>
+    
+    <button class="nav-item" data-action="invite">
+      <i class="fa-solid fa-user-plus nav-icon"></i> 
+      <span>Invite Network</span>
+    </button>
+    
+    <div class="nav-section">
+        <h4 class="nav-heading">Support</h4>
+        <a class="nav-item" href="mailto:ufaqtech.global@gmail.com">
+          <i class="fa-solid fa-envelope nav-icon"></i>
+          <span>Team Support Desk</span>
+        </a>
+        <a class="nav-item" href="https://wa.me/923415942806" target="_blank">
+          <i class="fa-brands fa-whatsapp nav-icon"></i>
+          <span>WhatsApp Support</span>
+        </a>
+        <a class="nav-item" href="https://t.me/ufaqtech" target="_blank">
+          <i class="fa-brands fa-telegram nav-icon"></i>
+          <span>Telegram Support</span>
+        </a>
+      </div>
+
+    <!-- Sticks to bottom organically -->
+    <button class="nav-item danger" id="logoutBtn">
+      <i class="fa-solid fa-power-off nav-icon"></i> 
+      <span>Logout</span>
+    </button>
+  </nav>
+</aside>
 
       <main class="main-panel">
         <section class="filters-panel">
@@ -150,8 +175,7 @@
             </div>
             <div class="input-element-group">
               <label for="inputMemberCount">Members / Followers</label>
-              <input name="memberCount" id="inputMemberCount" type="number" min="1" max="1024" placeholder="e.g. 1500" />
-              <div class="input-hint" id="memberHint">WhatsApp groups allow 1–1,024 members; adjust the value for other platforms.</div>
+              <input name="memberCount" id="inputMemberCount" type="number" min="0" placeholder="e.g. 1500" />
             </div>
           </div>
 
@@ -200,6 +224,8 @@
         </form>
       </div>
     </div>
+
+    
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.js"></script>
     <script src="assets/js/config.js"></script>
