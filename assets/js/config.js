@@ -1,3 +1,28 @@
+function loadServerEnvConfig() {
+  if (window.UFAQTECH_SUPABASE_URL && window.UFAQTECH_SUPABASE_ANON_KEY) {
+    return;
+  }
+
+  try {
+    const request = new XMLHttpRequest();
+    request.open('GET', '/api/env', false);
+    request.send(null);
+    if (request.status !== 200) {
+      return;
+    }
+
+    const data = JSON.parse(request.responseText || '{}');
+    if (data.UFAQTECH_SUPABASE_URL && !window.UFAQTECH_SUPABASE_URL) {
+      window.UFAQTECH_SUPABASE_URL = data.UFAQTECH_SUPABASE_URL;
+    }
+    if (data.UFAQTECH_SUPABASE_ANON_KEY && !window.UFAQTECH_SUPABASE_ANON_KEY) {
+      window.UFAQTECH_SUPABASE_ANON_KEY = data.UFAQTECH_SUPABASE_ANON_KEY;
+    }
+  } catch (error) {
+    console.warn('Unable to load env from /api/env:', error?.message || error);
+  }
+}
+
 function loadLocalEnvConfig() {
   if (window.UFAQTECH_SUPABASE_URL && window.UFAQTECH_SUPABASE_ANON_KEY) {
     return;
@@ -25,4 +50,5 @@ function loadLocalEnvConfig() {
   }
 }
 
+loadServerEnvConfig();
 loadLocalEnvConfig();
