@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /profile.html
+Disallow: /login.html
+
+Sitemap: https://ufaqtech-socialhub.vercel.app/sitemap.xml
