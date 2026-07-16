@@ -26,7 +26,7 @@ if (slides.length) {
 
 nextStepBtn?.addEventListener('click', () => {
   if (currentSlide === slides.length - 1) {
-    window.location.href = 'login.html';
+    window.location.href = 'home.html';
   } else {
     goToNextStep();
   }

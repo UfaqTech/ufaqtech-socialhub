@@ -168,7 +168,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       await ensureProfile(user.id, user.user_metadata?.full_name || '', user.email || '');
-      window.location.href = 'home.html';
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect') || 'home.html';
+      window.location.href = redirect;
     }
   } catch (error) {
     console.error('Session restore error:', error.message);
@@ -237,7 +239,9 @@ if (form) {
 
         setMessage('Login successful! Redirecting...', 'success');
         window.setTimeout(() => {
-          window.location.href = 'home.html';
+          const params = new URLSearchParams(window.location.search);
+          const redirect = params.get('redirect') || 'home.html';
+          window.location.href = redirect;
         }, 800);
       }
     } catch (error) {

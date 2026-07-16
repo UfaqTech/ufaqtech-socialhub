@@ -82,7 +82,8 @@ async function loadUserProfileHeader() {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      window.location.href = 'login.html';
+      const redirect = encodeURIComponent('profile.html');
+      window.location.href = `login.html?redirect=${redirect}`;
       return;
     }
 

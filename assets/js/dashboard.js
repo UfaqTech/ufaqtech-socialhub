@@ -327,7 +327,7 @@ async function loadProfile() {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      window.location.href = 'login.html';
+      enterGuestMode();
       return;
     }
 
@@ -347,6 +347,23 @@ async function loadProfile() {
     }
   } catch (error) {
     console.error('Error loading profiles:', error.message);
+  }
+}
+
+function enterGuestMode() {
+  // Allow guests to browse approved links but disable actions that require auth
+  if (sidebarName) sidebarName.textContent = 'Guest Viewer';
+  if (sidebarEmail) sidebarEmail.textContent = '';
+  if (sidebarAvatar) sidebarAvatar.src = 'assets/images/UT_social-hub.png';
+  if (logoutBtn) logoutBtn.style.display = 'none';
+
+  // Ensure create link button redirects guests to login
+  if (createLinkBtn) {
+    createLinkBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const redirect = encodeURIComponent(window.location.pathname.replace(/\//, '') || 'home.html');
+      window.location.href = `login.html?redirect=${redirect}`;
+    });
   }
 }
 
@@ -378,9 +395,21 @@ function closeReportModal() {
   reportModal.style.display = 'none';
 }
 
-createLinkBtn.addEventListener('click', (event) => {
+createLinkBtn.addEventListener('click', async (event) => {
   event.preventDefault();
-  openLinkModal();
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      const redirect = encodeURIComponent(window.location.pathname.replace(/\//, '') || 'home.html');
+      window.location.href = `login.html?redirect=${redirect}`;
+      return;
+    }
+    openLinkModal();
+  } catch (err) {
+    console.error('Auth check failed:', err?.message || err);
+    const redirect = encodeURIComponent(window.location.pathname.replace(/\//, '') || 'home.html');
+    window.location.href = `login.html?redirect=${redirect}`;
+  }
 });
 closeModalBtn.addEventListener('click', (event) => {
   event.preventDefault();
