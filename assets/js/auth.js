@@ -12,6 +12,7 @@ const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 const passwordToggleBtn = document.getElementById('togglePassword');
 const googleAuthBtn = document.getElementById('googleAuthBtn');
+const guestContinueBtn = document.getElementById('guestContinueBtn');
 let mode = 'login';
 
 function getRedirectUrl() {
@@ -154,6 +155,14 @@ if (googleAuthBtn) {
         'error'
       );
     }
+  });
+}
+
+if (guestContinueBtn) {
+  guestContinueBtn.addEventListener('click', () => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect') || 'home.html';
+    window.location.href = redirect;
   });
 }
 
